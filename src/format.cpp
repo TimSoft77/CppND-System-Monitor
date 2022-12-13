@@ -12,8 +12,19 @@ string Format::ElapsedTime(long seconds) {
   seconds = seconds % 3600;
   int minutes = seconds / 60;
   seconds = seconds % 60;
-  string output = std::to_string(hours) + ":" + std::to_string(minutes) + ":" +
-                  std::to_string(seconds);
+  string output;
+  if (hours < 10) {
+    output += "0";
+  }
+  output += std::to_string(hours) + ":";
+  if (minutes < 10) {
+    output += "0";
+  }
+  output += std::to_string(minutes) + ":";
+  if (seconds < 10) {
+    output += "0";
+  }
+  output += std::to_string(seconds);
 
   return output;
 }

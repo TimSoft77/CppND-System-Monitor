@@ -9,8 +9,8 @@ class Processor {
  private:
  static const int minUptimeInterval = 2; // seconds
  int lastUptime = 0;
- int lastActiveJiffies = 0;
- int lastTotalJiffies = 1; // to avoid a divide by zero error
+ float lastActiveJiffies = 0;
+ float lastTotalJiffies = 1; // to avoid a divide by zero error
  float lastUtilization = 0;
 };
 

@@ -103,7 +103,19 @@ long LinuxParser::UpTime() {
 // Read and return the number of jiffies for the system per:
 // https://knowledge.udacity.com/questions/129844
 long LinuxParser::Jiffies() {
-   return sysconf(_SC_CLK_TCK)*UpTime(); 
+  string token;
+  string line;
+  long jiffies = 0;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line); // data is on the 1st line
+    linestream >> token; // throw out the key "cpu";
+    while (linestream >> token) {
+      jiffies += std::stol(token);
+    }
+  }
+  return jiffies;
 }
 
 // Read and return the number of active jiffies for a PID per:
@@ -129,19 +141,7 @@ long LinuxParser::ActiveJiffies(int pid) {
 // Read and return the number of active jiffies for the system per:
 // https://knowledge.udacity.com/questions/129844
 long LinuxParser::ActiveJiffies() {
-  string token;
-  string line;
-  long activeJiffies = 0;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line); // data is on the 1st line
-    linestream >> token; // throw out the key "cpu";
-    while (linestream >> token) {
-      activeJiffies += std::stol(token);
-    }
-  }
-  return activeJiffies - IdleJiffies();
+  return Jiffies() - IdleJiffies();
 }
 
 // Read and return the number of idle jiffies for the system per:
@@ -210,7 +210,9 @@ string LinuxParser::Ram(int pid) {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       linestream >> key >> value;
-      if (key == "VmSize:") {
+      if (key == "VmRSS:") { 
+        // Changed from "VmSize" per Udacity review comment based on:
+        // https://man7.org/linux/man-pages/man5/proc.5.html
         break;
       }
     }

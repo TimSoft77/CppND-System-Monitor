@@ -7,8 +7,8 @@ float Processor::Utilization() {
     float utilization = lastUtilization; // Default to the most recent calculation
     // Update utilization if at least minUptimeInterval seconds has passed
     if (upTime - lastUptime > minUptimeInterval) {
-        long activeJiffies = LinuxParser::ActiveJiffies();
-        long totalJiffies = LinuxParser::Jiffies();
+        float activeJiffies = LinuxParser::ActiveJiffies();
+        float totalJiffies = LinuxParser::Jiffies();
         utilization = (activeJiffies - lastActiveJiffies)/(totalJiffies - lastTotalJiffies);
         lastActiveJiffies = activeJiffies;
         lastTotalJiffies = totalJiffies;

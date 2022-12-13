@@ -23,8 +23,13 @@ vector<Process>& System::Processes() {
     processes_.clear();
     vector<int> pids = LinuxParser::Pids();
     for (int pid : pids) {
-        processes_.emplace_back(Process(pid));
+        if (!LinuxParser::Command(pid).empty()) {
+            processes_.emplace_back(pid);
+        }
     }
+    // Thanks stackoverflow:
+    // https://stackoverflow.com/questions/45454320/sorting-vector-of-objects-with-operator-overloading-in-c
+    std::sort(processes_.begin() , processes_.end() ,[](Process& proc1 , Process& procr) { return proc1 < procr;} );
     return processes_;
 }
 
